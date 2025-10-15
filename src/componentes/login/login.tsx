@@ -29,9 +29,11 @@ function Login(){
             else if(resposta.status ===400){
                 navigate(`/login?messagem=${resposta?.data?.messagem}`)
             }
-        })
+        }).catch((error: any) => {
+            const msg = error?.response?.data?.mensagem || error?.mensagem || "Erro Desconhecido!"
+            navigate(`/login?mensagem=${encodeURIComponent(msg)}`)
+        });
     }
-
 
     return(
     <>
