@@ -26,6 +26,7 @@ function Login(){
                 localStorage.setItem("token",resposta?.data?.token)
                 navigate("/")
             }
+<<<<<<< HEAD
             else if(resposta.status ===400){
                 navigate(`/login?messagem=${resposta?.data?.messagem}`)
             }
@@ -33,6 +34,14 @@ function Login(){
             const msg = error?.response?.data?.mensagem || error?.mensagem || "Erro Desconhecido!"
             navigate(`/login?mensagem=${encodeURIComponent(msg)}`)
         });
+=======
+        }).catch((error:any)=>{
+            const msg = error?.response?.data?.mensagem || 
+                        error?.mensagem || 
+                        "Erro Desconhecido!"
+            navigate(`/login?message=${encodeURIComponent(msg)}`)
+        })
+>>>>>>> cc6552c07394ad09ed6fbcb471efbfcde569c61b
     }
 
     return(
