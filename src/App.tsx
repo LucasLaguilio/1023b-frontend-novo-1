@@ -26,27 +26,17 @@ function App() {
       urlfoto: formData.get('urlfoto') as string,
       descricao: formData.get('descricao') as string
     }
-    fetch('/api/produtos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    })
-      .then((response) => response.json())
-      .then((newProduto) => setProdutos([...produtos, newProduto]))
-      .catch((error) => console.error('Error posting data:', error))
+    api.post("/produtos", data)
+    .then((response) => setProdutos([...produtos, response.data]))
+    .catch((error) => alert('Error posting data:' + error?.mensagem))
     form.reset()
+
   }
+
   function adicionarCarrinho(produtoId: string) {
-    const clienteId = "12345"
-    fetch('/api/carrinho', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ produtoId, clienteId })
-    })
+    api.post("/adicionarItem", { produtoId, quantidade: 1 })
+    .then(() => alert("Produto adicionado ao carrinho!"))
+    .catch((error) => alert('Error adding to cart:' + error?.mensagem))
   }
   return (
     <>

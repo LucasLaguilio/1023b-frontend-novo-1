@@ -19,7 +19,7 @@ api.interceptors.response.use(
         const status = error?.response?.status;
         if(status===401&&!(error?.response?.config?.url?.endsWith("/login"))){
             localStorage.removeItem("token")
-            window.location.href="/login?message=Token inválido!"
+            window.location.href="/login?mensagem=Token inválido!"
         }
         return Promise.reject(error)
     }

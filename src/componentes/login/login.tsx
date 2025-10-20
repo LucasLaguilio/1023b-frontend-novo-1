@@ -7,7 +7,7 @@ function Login(){
     const [searchParams] = useSearchParams()
     //Dentro do searchParans eu consigo utilizar o get para pegar 
     // o valor da variável passada pela URL
-    const mensagem = searchParams.get("message")
+    const mensagem = searchParams.get("mensagem")
 
     //Função chamada quando clicamos no botão do formulário
     function handleSubmit(event:React.FormEvent<HTMLFormElement>){
@@ -30,7 +30,7 @@ function Login(){
             const msg = error?.response?.data?.mensagem || 
                         error?.mensagem || 
                         "Erro Desconhecido!"
-            navigate(`/login?message=${encodeURIComponent(msg)}`)
+            navigate(`/login?mensagem=${encodeURIComponent(msg)}`)
         })
     }
 
