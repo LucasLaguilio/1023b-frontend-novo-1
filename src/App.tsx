@@ -41,6 +41,7 @@ function App() {
   return (
     <>
       <div>Cadastro de Produtos</div>
+      <a href='/Carrinho'>Ir para o Carrinho</a>
       <form onSubmit={handleForm}>
         <input type="text" name="nome" placeholder="Nome" />
         <input type="number" name="preco" placeholder="Preço" />
@@ -65,3 +66,4 @@ function App() {
 }
 
 export default App
+
