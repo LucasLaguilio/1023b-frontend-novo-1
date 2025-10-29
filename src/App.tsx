@@ -1,6 +1,6 @@
 import './App.css'
 import api from './api/api'
-//useffect
+
 import { useState, useEffect } from 'react'
 type ProdutoType = {
   _id: string,
