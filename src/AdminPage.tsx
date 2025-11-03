@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "./AdminPageController.css";
+import "./adminPage.css";
 
 interface Usuario {
   id: number;
   nome: string;
   email: string;
-  cargo: string; 
+  tipo: string; 
 }
 
-export default function AdminPage() {
+ function AdminPage() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [erro, setErro] = useState<string>("");
 
@@ -21,16 +21,17 @@ export default function AdminPage() {
       return;
     }
 
-    axios
-      .get("http://localhost:8000/admin/usuarios", {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => setUsuarios(res.data))
-      .catch((err) => {
-        console.error(err);
-        setErro("Acesso negado ou erro ao carregar usuários.");
-      });
-  }, []);
+  axios.get<Usuario[]>('http://localhost:8000/usuarios', {
+    headers: {
+      Authorization: `Bearer ${token}`, // token válido
+    }
+  })
+    .then((res: { data: Usuario[] }) => setUsuarios(res.data))
+    .catch((err: unknown) => {
+      console.error(err);
+      setErro("Acesso negado ou erro ao carregar usuários.");
+    });
+}, []);
 
   if (erro) {
     return <p className="erro">{erro}</p>;
@@ -50,7 +51,7 @@ export default function AdminPage() {
               <th>ID</th>
               <th>Nome</th>
               <th>Email</th>
-              <th>Cargo</th>
+              <th>Tipo</th>
             </tr>
           </thead>
           <tbody>
@@ -59,7 +60,7 @@ export default function AdminPage() {
                 <td>{u.id}</td>
                 <td>{u.nome}</td>
                 <td>{u.email}</td>
-                <td>{u.cargo}</td>
+                <td>{u.tipo}</td>
               </tr>
             ))}
           </tbody>
@@ -67,4 +68,4 @@ export default function AdminPage() {
       )}
     </div>
   );
-}
+}    export default AdminPage;
