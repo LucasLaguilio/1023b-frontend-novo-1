@@ -21,8 +21,7 @@ export default function AdminPage() {
       return;
     }
 
-    axios
-      .get("http://localhost:8000/admin/usuarios", {
+    axios.get("http://localhost:8000/admin/usuarios", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setUsuarios(res.data))

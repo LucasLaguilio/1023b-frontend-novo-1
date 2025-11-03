@@ -1,6 +1,9 @@
+// Carrinho.tsx
+
 import './App.css'
 import api from './api/api'
 import { useState, useEffect } from 'react'
+import axios from 'axios' // Importa axios para tipagem de erro
 
 type ItemCarrinho = {
   _id?: string,
@@ -23,7 +26,6 @@ type ProdutoType = {
 function Carrinho() {
   const [itens, setItens] = useState<ItemCarrinho[]>([])
   const [produtos, setProdutos] = useState<ProdutoType[]>([])
-  const [usuarioId, setUsuarioId] = useState<string>('')
 
   useEffect(() => {
     // Busca produtos para ter acesso às fotos e descrições
@@ -34,33 +36,46 @@ function Carrinho() {
     // Busca carrinho
     api.get("/carrinho")
       .then((response) => {
+        // Pega itens de response.data.itens ou do próprio response.data se não for o formato completo
+        // Pega itens de response.data.itens ou do próprio response.data se não for o formato completo
         const itensCarrinho = response.data.itens || response.data
         setItens(Array.isArray(itensCarrinho) ? itensCarrinho : [])
-        // Pega o usuarioId do response
-        if (response.data.usuarioId) {
-          setUsuarioId(response.data.usuarioId)
-        }
       })
-      .catch((error) => console.error('Error fetching cart:', error))
   }, [])
 
   function removerCarrinho() {
-    if (!usuarioId) {
-      alert('Usuário não identificado')
-      return
-    }
-
-    // Como o backend usa req.usuarioId do token, não precisa enviar no body
+    // O backend usa req.usuarioId do token.
     api.delete("/carrinho")
       .then(() => {
         setItens([])
         alert("Carrinho esvaziado!")
       })
-      .catch((error) => alert('Error removing cart:' + error?.mensagem))
+      .catch((error) => {
+        // CORREÇÃO: Acessa a mensagem de erro do backend corretamente
+        const mensagem = axios.isAxiosError(error) ? error.response?.data?.message || 'Erro desconhecido.' : 'Erro de rede.';
+        alert(`Erro ao remover carrinho: ${mensagem}`);
+      })
   }
   
 
-  // Função para buscar dados completos do produto
+
+  // Sheron: Função para remover uma unidade de um item do carrinho
+  function removerunidadeItem(produtoId: string) {
+    api.post("/removerunidadeItem", { produtoId })
+      .then((response) => {
+        // MELHORIA: Usa os dados do carrinho ATUALIZADO retornados pelo backend para sincronizar o estado
+        const itensAtualizados = response.data.itens || [];
+        setItens(itensAtualizados);
+        alert("Uma unidade do item foi removida do carrinho!");
+      })
+      .catch((error) => {
+        // CORREÇÃO: Acessa a mensagem de erro do backend corretamente
+        const mensagem = axios.isAxiosError(error) ? error.response?.data?.message || 'Erro desconhecido.' : 'Erro de rede.';
+        alert(`Erro ao remover unidade do item: ${mensagem}`);
+      })
+  }
+
+
   function getDadosProduto(produtoId: string) {
     const produto = produtos.find(p => p._id === produtoId)
     return produto || { urlfoto: '', descricao: 'Produto não encontrado' }
@@ -102,13 +117,16 @@ function Carrinho() {
                 <p>Preço Unitário: R$ {item.precoUnitario.toFixed(2)}</p>
                 <p>Quantidade: {item.quantidade}</p>
                 <p>Subtotal: R$ {(item.precoUnitario * item.quantidade).toFixed(2)}</p>
+                {/* Sheron: Botão para remover uma unidade do item */}
+                <button onClick={() => removerunidadeItem(item.produtoId)}>
+                  Remover Uma Unidade
+                </button>
               </div>
             )
           })}
 
           <div>
             <h3>Total da Compra: R$ {totalCarrinho}</h3>
-            <button>Finalizar Compra</button>
           </div>
         </>
       )}
