@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import CampoDeBusca from "./CampoDeBusca.tsx"; // caminho relative dentro de src
+import CampoDeBusca from "./CampoDeBusca"; // caminho relativo
 
 interface Produto {
   id: number;
