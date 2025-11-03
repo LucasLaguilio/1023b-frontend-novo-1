@@ -58,6 +58,7 @@ function Carrinho() {
       })
       .catch((error) => alert('Error removing cart:' + error?.mensagem))
   }
+  
 
   // Função para buscar dados completos do produto
   function getDadosProduto(produtoId: string) {
