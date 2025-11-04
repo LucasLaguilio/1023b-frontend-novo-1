@@ -1,6 +1,6 @@
 // Carrinho.tsx
 
-import './App.css'
+import './Home.css'
 import api from './api/api'
 import { useState, useEffect } from 'react'
 import axios from 'axios' // Importa axios para tipagem de erro
