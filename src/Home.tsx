@@ -18,22 +18,6 @@ function Home() {
         setProdutos(response.data)})
       .catch((error) => console.error('Error fetching data:', error))
   }, [])
-  function handleForm(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const form = event.currentTarget
-    const formData = new FormData(form)
-    const data = {
-      nome: formData.get('nome') as string,
-      preco: Number(formData.get('preco')),
-      urlfoto: formData.get('urlfoto') as string,
-      descricao: formData.get('descricao') as string
-    }
-    api.post("/produtos", data)
-    .then((response) => setProdutos([...produtos, response.data]))
-    .catch((error) => alert('Error posting data:' + error?.mensagem))
-    form.reset()
-
-  }
 
   function adicionarCarrinho(produtoId: string) {
     api.post("/adicionarItem", { produtoId, quantidade: 1 })
