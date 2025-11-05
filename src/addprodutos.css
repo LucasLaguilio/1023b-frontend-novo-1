@@ -39,7 +39,7 @@ form input:hover, form textarea:hover {
 
 form input:focus, form textarea:focus {
     outline: none;
-    border: 2px solid #4CAF50;
+    border: 2px solid #44b948;
     background-color: #3d424b;
 }
 

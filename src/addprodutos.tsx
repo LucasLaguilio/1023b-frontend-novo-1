@@ -96,7 +96,6 @@ function AdicionarProdutos() {
   const [produtos, setProdutos] = useState<ProdutoType[]>([])
   const [produtoEmEdicao, setProdutoEmEdicao] = useState<ProdutoType | null>(null);
 
-  // Verifica se há um token, para mostrar o botão 'Editar' apenas para usuários logados.
   const [isUserLoggedIn] = useState(!!localStorage.getItem('token')); 
  
 
