@@ -21,17 +21,15 @@ interface Usuario {
       return;
     }
 
-  axios.get<Usuario[]>('http://localhost:8000/usuarios', {
-    headers: {
-      Authorization: `Bearer ${token}`, // token válido
-    }
-  })
-    .then((res: { data: Usuario[] }) => setUsuarios(res.data))
-    .catch((err: unknown) => {
-      console.error(err);
-      setErro("Acesso negado ou erro ao carregar usuários.");
-    });
-}, []);
+    axios.get("http://localhost:8000/admin/usuarios", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => setUsuarios(res.data))
+      .catch((err) => {
+        console.error(err);
+        setErro("Acesso negado ou erro ao carregar usuários.");
+      });
+  }, []);
 
   if (erro) {
     return <p className="erro">{erro}</p>;
