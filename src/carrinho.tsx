@@ -117,7 +117,7 @@ function Carrinho() {
                 <p>Preço Unitário: R$ {item.precoUnitario.toFixed(2)}</p>
                 <p>Quantidade: {item.quantidade}</p>
                 <p>Subtotal: R$ {(item.precoUnitario * item.quantidade).toFixed(2)}</p>
-                {/* Sheron: Botão para remover uma unidade do item */}
+                {}
                 <button onClick={() => removerunidadeItem(item.produtoId)}>
                   Remover Uma Unidade
                 </button>

@@ -16,7 +16,7 @@ export default function AdminUsuarios() {
     try {
       const res = await axios.get("http://localhost:8000/admin/usuarios", {
         headers: {
-          "x-user-role": "ADMIN", // aqui simulamos o login ADMIN
+          "x-user-role": "ADMIN",
         },
       });
       setUsuarios(res.data);
@@ -31,7 +31,7 @@ export default function AdminUsuarios() {
 
   return (
     <div className="admin-container">
-      <h2>Área Administrativa 👑</h2>
+      <h2>Área Administrativa </h2>
       {erro && <p className="erro">{erro}</p>}
 
       {usuarios.length > 0 ? (
