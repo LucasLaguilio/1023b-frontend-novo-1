@@ -39,7 +39,7 @@ form input:hover, form textarea:hover {
 
 form input:focus, form textarea:focus {
     outline: none;
-    border: 2px solid #4CAF50;
+    border: 2px solid #44b948;
     background-color: #3d424b;
 }
 
@@ -126,7 +126,7 @@ form button:hover {
 }
 
 .modal-content {
-    background: #282c34; 
+    background: #282c35; 
     color: white;
     padding: 30px;
     border-radius: 8px;
