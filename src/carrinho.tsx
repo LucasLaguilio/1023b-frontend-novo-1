@@ -1,6 +1,6 @@
 // Carrinho.tsx
 
-import './Home.css'
+import './Carrinho.css' // Importa o novo CSS
 import api from './api/api'
 import { useState, useEffect } from 'react'
 import axios from 'axios' // Importa axios para tipagem de erro
@@ -36,45 +36,36 @@ function Carrinho() {
     // Busca carrinho
     api.get("/carrinho")
       .then((response) => {
-        // Pega itens de response.data.itens ou do próprio response.data se não for o formato completo
-        // Pega itens de response.data.itens ou do próprio response.data se não for o formato completo
         const itensCarrinho = response.data.itens || response.data
         setItens(Array.isArray(itensCarrinho) ? itensCarrinho : [])
       })
+      .catch((error) => console.error('Error fetching cart:', error)) // Adicionado tratamento de erro para o carrinho
   }, [])
 
   function removerCarrinho() {
-    // O backend usa req.usuarioId do token.
     api.delete("/carrinho")
       .then(() => {
         setItens([])
         alert("Carrinho esvaziado!")
       })
       .catch((error) => {
-        // CORREÇÃO: Acessa a mensagem de erro do backend corretamente
         const mensagem = axios.isAxiosError(error) ? error.response?.data?.message || 'Erro desconhecido.' : 'Erro de rede.';
         alert(`Erro ao remover carrinho: ${mensagem}`);
       })
   }
   
-
-
-  // Sheron: Função para remover uma unidade de um item do carrinho
   function removerunidadeItem(produtoId: string) {
     api.post("/removerunidadeItem", { produtoId })
       .then((response) => {
-        // MELHORIA: Usa os dados do carrinho ATUALIZADO retornados pelo backend para sincronizar o estado
         const itensAtualizados = response.data.itens || [];
         setItens(itensAtualizados);
         alert("Uma unidade do item foi removida do carrinho!");
       })
       .catch((error) => {
-        // CORREÇÃO: Acessa a mensagem de erro do backend corretamente
         const mensagem = axios.isAxiosError(error) ? error.response?.data?.message || 'Erro desconhecido.' : 'Erro de rede.';
         alert(`Erro ao remover unidade do item: ${mensagem}`);
       })
   }
-
 
   function getDadosProduto(produtoId: string) {
     const produto = produtos.find(p => p._id === produtoId)
@@ -86,51 +77,68 @@ function Carrinho() {
   ).toFixed(2)
 
   return (
-    <>
-      <div>🛒 Carrinho de Compras</div>
-      <a href='/'>← Voltar para Produtos</a>
+    <div className="Carrinho-container"> {/* CLASSE PRINCIPAL DO CONTAINER */}
       
-      <div>
-        <h2>Itens no Carrinho ({itens.length})</h2>
+      <div className="carrinho-header"> {/* CLASSE PARA O CABEÇALHO SUPERIOR */}
+        <div className="carrinho-header-titulo">
+          <span className="icone-carrinho">🛒</span> Carrinho de Compras
+        </div>
+        <a href='/' className="carrinho-header-link-voltar">← Voltar para Produtos</a> {/* CLASSE PARA O LINK */}
+      </div>
+      
+      <div className="carrinho-secao-titulo"> {/* CLASSE PARA O TÍTULO DA SEÇÃO DE ITENS */}
+        Itens no Carrinho ({itens.length})
         {itens.length > 0 && (
-          <button onClick={removerCarrinho}>
+          <button onClick={removerCarrinho} className="esvaziar-carrinho-btn"> {/* CLASSE PARA O BOTÃO ESVAZIAR */}
             🗑️ Esvaziar Carrinho
           </button>
         )}
       </div>
 
       {itens.length === 0 ? (
-        <p>Seu carrinho está vazio.</p>
+        <p className="carrinho-vazio-mensagem">Seu carrinho está vazio.</p> 
       ) : (
         <>
           {itens.map((item) => {
             const dadosProduto = getDadosProduto(item.produtoId)
             return (
-              <div key={item.produtoId}>
+              <div key={item.produtoId} className="item-carrinho-card"> {/* CLASSE PARA O CARD DE ITEM */}
+                
                 <img 
                   src={item.urlfoto || dadosProduto.urlfoto} 
                   alt={item.nome} 
-                  width="100" 
+                  className="item-carrinho-card-imagem" // CLASSE PARA A IMAGEM
                 />
-                <h3>{item.nome}</h3>
-                <p>{item.descricao || dadosProduto.descricao}</p>
-                <p>Preço Unitário: R$ {item.precoUnitario.toFixed(2)}</p>
-                <p>Quantidade: {item.quantidade}</p>
-                <p>Subtotal: R$ {(item.precoUnitario * item.quantidade).toFixed(2)}</p>
-                {}
-                <button onClick={() => removerunidadeItem(item.produtoId)}>
-                  Remover Uma Unidade
-                </button>
+                
+                <div className="item-detalhes"> {/* CLASSE PARA OS DETALHES DO ITEM */}
+                  <h3>{item.nome}</h3>
+                  <p className="descricao-produto">{item.descricao || dadosProduto.descricao}</p> {/* CLASSE PARA A DESCRIÇÃO */}
+                </div>
+
+                <div className="item-preco-quantidade-info"> {/* CLASSE PARA INFORMAÇÕES DE PREÇO/QTD */}
+                  <p className="item-preco-unitario">Preço Unitário: R$ {item.precoUnitario.toFixed(2)}</p>
+                  <p className="item-quantidade">Quantidade: {item.quantidade}</p>
+                </div>
+
+                <div className="item-acoes"> {/* CLASSE PARA AÇÕES DO ITEM */}
+                  <p className="item-subtotal">Subtotal: R$ {(item.precoUnitario * item.quantidade).toFixed(2)}</p>
+                  <button 
+                    onClick={() => removerunidadeItem(item.produtoId)}
+                    className='remover-unidade-btn' // CLASSE PARA O BOTÃO DE REMOVER UNIDADE
+                  >
+                    Remover Uma Unidade
+                  </button>
+                </div>
               </div>
             )
           })}
 
-          <div>
+          <div className="carrinho-resumo-total"> {/* CLASSE PARA O RESUMO TOTAL */}
             <h3>Total da Compra: R$ {totalCarrinho}</h3>
           </div>
         </>
-      )}
-    </>
+      )} 
+    </div>
   )
 }
 
