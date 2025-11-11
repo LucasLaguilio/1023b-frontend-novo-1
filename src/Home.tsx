@@ -48,6 +48,27 @@ function Home() {
         setTermoBusca(valor)
     }
 
+    const handleLogout = async () => {
+     try {
+         // 1. **Call API to invalidate token on server**
+         // The token is automatically sent via Auth middleware if 'api' is configured
+         await api.post('/logout', {}); 
+         
+         // 2. Clear client-side token (ALWAYS necessary)
+         localStorage.removeItem('token')
+         
+         // 3. Navigate with replace to prevent back button access
+         window.location.replace('/login') 
+         
+     } catch (error: any) { // Catch 'any' error type
+         console.error('Error during logout:', error.response?.data?.mensagem || error.message)
+         
+         // FALLBACK: Always log out locally for the user experience, even if server fails
+         localStorage.removeItem('token')
+         window.location.replace('/login')
+     }
+ }
+
     const adicionarCarrinho = async (produtoId: string) => {
         try {
             await api.post('/adicionarItem', { produtoId, quantidade: 1 })
@@ -57,10 +78,12 @@ function Home() {
             const msg = err?.response?.data?.mensagem ?? err?.message ?? 'Erro ao adicionar ao carrinho'
             alert(msg)
         }
+
+       
     }
 
     return (
-        <>
+        <>  <header> <button onClick={() => handleLogout()}>Logout</button> </header>
             <a href="/Carrinho">Ir para o Carrinho</a>
             <div>Lista de Produtos</div>
 
