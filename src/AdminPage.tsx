@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./adminPage.css";
 
+
 interface Usuario {
   id: number;
   nome: string;
@@ -45,8 +46,8 @@ function AdminPage() {
 
     // Buscar carrinhos e usuários em paralelo
     Promise.all([
-      axios.get<Carrinho[]>("http://localhost:8000/carrinhos/admin/todos", { headers }),
-      axios.get<Usuario[]>("http://localhost:8000/usuarios", { headers }),
+      axios.get<Carrinho[]>(`${import.meta.env.VITE_API_URL}/admin/carrinhos`, { headers }),
+      axios.get<Usuario[]>(`${import.meta.env.VITE_API_URL}/usuarios`, { headers }),
     ])
       .then(([carrinhosRes, usuariosRes]) => {
         setCarrinhos(carrinhosRes.data || []);
