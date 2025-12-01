@@ -16,7 +16,7 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif; /* Uma fonte moderna e legível */
+    font-family: 'Poppins', sans-serif;
     background-color: var(--cor-fundo);
     color: var(--cor-texto);
     margin: 0;
@@ -24,7 +24,6 @@ body {
     line-height: 1.6;
 }
 
-/* Adicionando padding geral para a aplicação */
 #root, .Home {
     padding: 20px;
     max-width: 1400px;
@@ -65,7 +64,7 @@ header a:hover {
 }
 
 .LogoutBtn {
-    background-color: #f44336; /* Vermelho para a Ação de Sair */
+    background-color: #f44336;
     color: white;
     border: none;
     cursor: pointer;
@@ -79,7 +78,41 @@ header a:hover {
 
 /*
 * ======================================
-* Estilos de Títulos, Busca e Mensagens
+* Campo de Busca — ARRUMADO
+* ======================================
+*/
+
+.CampoDeBusca-container {
+    margin: 20px auto 40px;
+    max-width: 600px;
+    width: 100%;
+}
+
+.CampoDeBusca-input {
+    width: 100%;
+    padding: 15px 22px;
+    border: 2px solid var(--cor-secundaria);
+    border-radius: 35px;
+    font-size: 1.1em;
+    outline: none;
+    background-color: white;
+    transition: 0.3s ease;
+    box-shadow: var(--sombra-leve);
+}
+
+.CampoDeBusca-input::placeholder {
+    color: #999;
+    font-weight: 400;
+}
+
+.CampoDeBusca-input:focus {
+    border-color: var(--cor-principal);
+    box-shadow: 0 0 0 3px rgba(255, 111, 145, 0.25);
+}
+
+/*
+* ======================================
+* Estilos de Títulos, Mensagens
 * ======================================
 */
 
@@ -89,26 +122,6 @@ h2 {
     margin-bottom: 30px;
     font-size: 2.5em;
     font-weight: 700;
-}
-
-.CampoDeBusca-container { /* Assumindo que este é o container do seu CampoDeBusca */
-    margin: 20px auto 40px;
-    max-width: 600px;
-}
-
-.CampoDeBusca-input { /* Se você puder estilizar o input diretamente */
-    width: 100%;
-    padding: 15px 20px;
-    border: 2px solid var(--cor-secundaria);
-    border-radius: 50px;
-    font-size: 1.1em;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.CampoDeBusca-input:focus {
-    border-color: var(--cor-principal);
-    box-shadow: 0 0 0 3px rgba(255, 111, 145, 0.3);
 }
 
 .loading-text, .error-text, .produto-lista-message {
@@ -139,13 +152,13 @@ h2 {
 
 /*
 * ======================================
-* Estilos da Lista de Produtos (Grid e Cards)
+* Lista de Produtos (Grid)
 * ======================================
 */
 
 .produto-lista {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsividade aqui! */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
     padding: 20px 0;
 }
@@ -159,7 +172,7 @@ h2 {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: 0.3s ease;
 }
 
 .produto-card:hover {
@@ -171,17 +184,16 @@ h2 {
     font-size: 1.5em;
     color: var(--cor-texto);
     margin: 10px 0;
-    min-height: 40px; /* Garante que todos os títulos tenham uma altura mínima */
+    min-height: 40px;
 }
 
 .produto-card img {
     width: 100%;
     max-width: 280px;
-    height: auto;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 15px;
-    aspect-ratio: 1/1; /* Mantém a imagem quadrada para melhor visualização de bolos */
+    aspect-ratio: 1/1;
     border: 2px solid var(--cor-secundaria);
 }
 
@@ -200,11 +212,6 @@ h2 {
     width: 100%;
 }
 
-.produto-descricao span {
-    font-weight: 600;
-    color: var(--cor-texto);
-}
-
 .produto-card button {
     background-color: var(--cor-principal);
     color: white;
@@ -214,8 +221,8 @@ h2 {
     cursor: pointer;
     font-size: 1.1em;
     font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    width: 100%; /* Ocupa a largura total do card */
+    transition: 0.3s ease;
+    width: 100%;
     max-width: 250px;
 }
 
@@ -227,16 +234,15 @@ h2 {
 
 /*
 * ======================================
-* Responsividade (Media Queries)
+* Responsividade
 * ======================================
 */
 
-/* Para tablets e telas menores (abaixo de 768px) */
 @media (max-width: 768px) {
     #root, .Home {
         padding: 15px;
     }
-    
+
     header {
         flex-direction: column;
         gap: 15px;
@@ -248,27 +254,21 @@ h2 {
     }
 
     .produto-lista {
-        /* O grid já é responsivo, mas ajustamos o minmax para garantir 1 coluna em telas muito pequenas */
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 20px;
     }
-    
+
     .produto-card {
         padding: 15px;
     }
-    
-    .produto-card button {
-        max-width: none; /* Deixa o botão ocupar a largura total no mobile */
-    }
 }
 
-/* Para celulares (abaixo de 480px) */
 @media (max-width: 480px) {
     h2 {
         font-size: 1.8em;
         margin-bottom: 15px;
     }
-    
+
     header a, .LogoutBtn {
         font-size: 0.9em;
         padding: 8px 12px;
@@ -280,7 +280,6 @@ h2 {
     }
 
     .produto-lista {
-        /* Garante uma única coluna em telas muito pequenas */
         grid-template-columns: 1fr;
         gap: 15px;
     }

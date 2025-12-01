@@ -1,28 +1,14 @@
-import React from "react";
-
-interface CampoDeBuscaProps {
-  valor: string;
-  onChange: (valor: string) => void;
-  placeholder?: string;
+export default function CampoDeBusca({ valor, onChange, placeholder }: any) {
+    return (
+        <div className="CampoDeBusca-container">
+            <span className="CampoDeBusca-icone"></span>
+            <input
+                className="CampoDeBusca-input"
+                type="text"
+                value={valor}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+            />
+        </div>
+    );
 }
-
-const CampoDeBusca: React.FC<CampoDeBuscaProps> = ({
-  valor,
-  onChange,
-  placeholder = "Buscar...",
-}) => {
-  return (
-    <div className="campo-de-busca-container"> 
-        <input
-            type="text"
-            value={valor}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder}
-            className="campo-de-busca-input" 
-            aria-label={placeholder} 
-        />
-    </div>
-  );
-};
-
-export default CampoDeBusca;
