@@ -12,23 +12,17 @@ const CampoDeBusca: React.FC<CampoDeBuscaProps> = ({
   placeholder = "Buscar...",
 }) => {
   return (
-    <input
-      type="text"
-      value={valor}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      style={{
-        padding: "10px",
-        width: "100%",
-        maxWidth: "400px",
-        borderRadius: "8px",
-        border: "1px solid #ccc",
-        outline: "none",
-        marginBottom: "20px",
-      }}
-    />
+    <div className="campo-de-busca-container"> 
+        <input
+            type="text"
+            value={valor}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+            className="campo-de-busca-input" 
+            aria-label={placeholder} 
+        />
+    </div>
   );
 };
 
 export default CampoDeBusca;
-
