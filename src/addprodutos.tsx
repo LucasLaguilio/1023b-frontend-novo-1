@@ -20,7 +20,11 @@ interface EditarProdutoProps {
 }
 
 const EditarProdutoForm: React.FC<EditarProdutoProps> = ({ produto, onClose, onSave }) => {
-    const [dadosForm, setDadosForm] = useState(produto);
+    const [dadosForm, setDadosForm] = useState<ProdutoType>(produto);
+
+    useEffect(() => {
+      setDadosForm(produto);
+    }, [produto]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -30,22 +34,29 @@ const EditarProdutoForm: React.FC<EditarProdutoProps> = ({ produto, onClose, onS
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-       
-        api.put(`/produtos/${dadosForm._id}`, dadosForm)
-            .then(response => {
-                onSave(response.data);
-                onClose();
-            })
-           
-            .catch(error => {
-               
-                if (error.response?.status !== 401 && error.response?.status !== 403) {
-                     alert('Erro ao atualizar produto: ' + (error.response?.data?.message || 'Tente novamente.'));
-                }
-            });
+        try {
+            const response = await api.put(`/produtos/${dadosForm._id}`, dadosForm);
+            onSave(response.data);
+            onClose();
+        } catch (error: any) {
+            if (error.response?.status !== 401 && error.response?.status !== 403) {
+                alert('Erro ao atualizar produto: ' + (error.response?.data?.message || 'Tente novamente.'));
+            }
+        }
+    };
+
+    const excluirProduto = async (id: string) => {
+        try {
+            await api.delete(`/produtos/excluir/${id}`);
+            alert('Produto excluído com sucesso!');
+            onClose();
+        } catch (error) {
+            console.error('Erro ao excluir produto:', error);
+            alert('Erro ao excluir produto. Tente novamente.');
+        }
+        window.location.reload();''
     };
 
     return (
@@ -85,6 +96,17 @@ const EditarProdutoForm: React.FC<EditarProdutoProps> = ({ produto, onClose, onS
                     <div className="modal-actions">
                         <button type="submit">Salvar Edição</button>
                         <button type="button" onClick={onClose}>Cancelar</button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm('Deseja realmente excluir este produto?')) {
+                              excluirProduto(dadosForm._id);
+                            }
+                          }}
+                          className="delete-button"
+                        >
+                          Excluir Produto
+                        </button>
                     </div>
                 </form>
             </div>

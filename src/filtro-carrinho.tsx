@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import "./filtro-carrinho.css"; 
+import "./filtro-carrinho.css";
 
 interface ItemCarrinho {
   id: number;
@@ -25,10 +24,29 @@ export default function Carrinho() {
 
   const buscarItens = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/carrinho", {
-        params: filtros,
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error("Nenhum token encontrado no localStorage.");
+        return;
+      }
+
+      const query = new URLSearchParams({
+        nome: filtros.nome || "",
+        precoMin: filtros.precoMin || "",
+        precoMax: filtros.precoMax || "",
+      }).toString();
+
+      const res = await fetch(`http://localhost:8000/carrinho?${query}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
-      setItens(res.data);
+
+      const data = await res.json();
+      setItens(data);
     } catch (err) {
       console.error("Erro ao buscar itens:", err);
     }
@@ -40,7 +58,7 @@ export default function Carrinho() {
 
   return (
     <div className="carrinho-container">
-      <h2>🛒 Carrinho</h2>
+      <h2>Carrinho</h2>
 
       <div className="filtros">
         <input
@@ -49,18 +67,21 @@ export default function Carrinho() {
           value={filtros.nome}
           onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
         />
+
         <input
           type="number"
           placeholder="Preço mínimo"
           value={filtros.precoMin}
           onChange={(e) => setFiltros({ ...filtros, precoMin: e.target.value })}
         />
+
         <input
           type="number"
           placeholder="Preço máximo"
           value={filtros.precoMax}
           onChange={(e) => setFiltros({ ...filtros, precoMax: e.target.value })}
         />
+
         <button onClick={buscarItens}>Filtrar</button>
       </div>
 
@@ -72,6 +93,7 @@ export default function Carrinho() {
             <th>Quantidade</th>
           </tr>
         </thead>
+
         <tbody>
           {itens.length > 0 ? (
             itens.map((item) => (
