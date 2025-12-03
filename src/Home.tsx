@@ -34,7 +34,7 @@ function Home() {
                 console.log(`Produtos carregados para o termo: "${termo}"`)
             } catch (err: any) {
                 console.error('Error fetching data:', err)
-                setError('Falha ao carregar os produtos. Verifique o servidor.')
+                setError('❌ Falha ao carregar os produtos. Verifique o servidor ou sua conexão.') 
                 setProdutos([])
             } finally {
                 setLoading(false)
@@ -48,44 +48,81 @@ function Home() {
         setTermoBusca(valor)
     }
 
+    const handleLogout = async () => {
+     try {
+         await api.post('/logout', {}); 
+         localStorage.removeItem('token')
+         window.location.replace('/login') 
+         
+     } catch (error: any) { 
+         console.error('Error during logout:', error.response?.data?.mensagem || error.message)
+         localStorage.removeItem('token')
+         window.location.replace('/login')
+     }
+ }
+
     const adicionarCarrinho = async (produtoId: string) => {
         try {
             await api.post('/adicionarItem', { produtoId, quantidade: 1 })
-            alert('Produto adicionado ao carrinho!')
+            alert('✅ Produto adicionado ao carrinho com sucesso!')
         } catch (err: any) {
             console.error('Error adding to cart:', err)
-            const msg = err?.response?.data?.mensagem ?? err?.message ?? 'Erro ao adicionar ao carrinho'
-            alert(msg)
+            const msg = err?.response?.data?.mensagem ?? err?.message ?? 'Erro ao adicionar ao carrinho. Tente fazer login novamente.'
+            alert(`⚠️ ${msg}`)
         }
     }
 
-    return (
-        <>
-            <a href="/Carrinho">Ir para o Carrinho</a>
-            <div>Lista de Produtos</div>
+    const formatarPreco = (preco: number) => {
+        return `R$ ${preco.toFixed(2).replace('.', ',')}`;
+    };
 
+    return (
+        <>  
+            <header> 
+                <a href="/Carrinho" aria-label="Ver meu Carrinho de Compras">🛒 Ir para o Carrinho</a>
+                <button onClick={handleLogout} className='LogoutBtn'>Sair (Logout)</button> 
+            </header>
+
+            <h2>🎂 Lista de Bolos e Doces Artesanais</h2>
+            
             <CampoDeBusca
                 valor={termoBusca}
                 onChange={handleBuscaChange}
                 placeholder="Buscar bolos por nome ou categoria..."
             />
 
-            {loading && <p>Carregando ou buscando bolos de pote...</p>}
-            {error && <p style={{ color: 'red' }}>Erro: {error}</p>}
+            {loading && <p className="loading-text">🕒 Carregando ou buscando produtos deliciosos...</p>}
+            {error && <p className="error-text">Erro: {error}</p>}
 
             {!loading && !error && (
-                <div>
+                <div className="produto-lista">
                     {produtos.length === 0 ? (
-                        <p>Nenhum bolo de pote encontrado.</p>
+                        <p className="produto-lista-message">😥 Nenhum produto encontrado para o termo "{termoBusca}".</p>
                     ) : (
                         produtos.map((produto) => (
-                            <div key={produto._id}>
+                            <div key={produto._id} className="produto-card">
+                                
+                                
+                                
                                 <h2>{produto.nome}</h2>
-                                <p>Preço: R$ {produto.preco}</p>
-                                <img src={produto.urlfoto} alt={produto.nome} width="200" />
-                                <p>Descrição: {produto.descricao}</p>
-                                <button onClick={() => adicionarCarrinho(produto._id)}>Adicionar ao carrinho</button>
+                                
+                                <img 
+                                    src={produto.urlfoto} 
+                                    alt={`Foto de ${produto.nome}`} 
+                                    width="280" 
+                                    loading="lazy" 
+                                />
+                                <span className="produto-preco">{formatarPreco(produto.preco)}</span>
+                                <p className="produto-descricao"><span>Descrição:</span> {produto.descricao}</p>
+                                
+                                <button 
+                                    onClick={() => adicionarCarrinho(produto._id)}
+                                    aria-label={`Adicionar ${produto.nome} ao carrinho`}
+                                >
+                                    Adicionar ao Carrinho
+                                </button>
                             </div>
+                            
                         ))
                     )}
                 </div>

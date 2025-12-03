@@ -1,42 +1,287 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/*
+* ======================================
+* Estilos Globais e Reset (Início)
+* ======================================
+*/
+
+:root {
+    --cor-principal: #ff6f91; /* Rosa Vibrante (Chic e de Confeitaria) */
+    --cor-secundaria: #ff9d80; /* Salmão/Pêssego Suave */
+    --cor-fundo: #f4f7f6; /* Fundo Suave */
+    --cor-texto: #333;
+    --cor-card-fundo: #ffffff;
+    --sombra-leve: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --sombra-botao: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --borda-raio: 12px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+    font-family: 'Poppins', sans-serif; /* Uma fonte moderna e legível */
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Adicionando padding geral para a aplicação */
+#root, .Home {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/*
+* ======================================
+* Estilos do Cabeçalho (Header)
+* ======================================
+*/
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--cor-secundaria);
 }
 
-.card {
-  padding: 2em;
+header a, .LogoutBtn {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-.read-the-docs {
-  color: #888;
+header a {
+    color: var(--cor-principal);
+    border: 2px solid var(--cor-principal);
+}
+
+header a:hover {
+    background-color: var(--cor-principal);
+    color: var(--cor-card-fundo);
+}
+
+.LogoutBtn {
+    background-color: #f44336; /* Vermelho para a Ação de Sair */
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--sombra-botao);
+}
+
+.LogoutBtn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+}
+
+/*
+* ======================================
+* Estilos de Títulos, Busca e Mensagens
+* ======================================
+*/
+
+h2 {
+    text-align: center;
+    color: var(--cor-principal);
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    font-weight: 700;
+}
+
+.CampoDeBusca-container { /* Assumindo que este é o container do seu CampoDeBusca */
+    margin: 20px auto 40px;
+    max-width: 600px;
+}
+
+.CampoDeBusca-input { /* Se você puder estilizar o input diretamente */
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid var(--cor-secundaria);
+    border-radius: 50px;
+    font-size: 1.1em;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.CampoDeBusca-input:focus {
+    border-color: var(--cor-principal);
+    box-shadow: 0 0 0 3px rgba(255, 111, 145, 0.3);
+}
+
+.loading-text, .error-text, .produto-lista-message {
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    font-size: 1.2em;
+    font-weight: 500;
+    border-radius: 8px;
+}
+
+.loading-text {
+    color: #007bff;
+    background-color: #e0f7fa;
+}
+
+.error-text {
+    color: #c62828;
+    background-color: #ffebee;
+    border: 1px solid #c62828;
+}
+
+.produto-lista-message {
+    color: var(--cor-texto);
+    background-color: #fffde7;
+    border: 1px solid #fdd835;
+}
+
+/*
+* ======================================
+* Estilos da Lista de Produtos (Grid e Cards)
+* ======================================
+*/
+
+.produto-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsividade aqui! */
+    gap: 30px;
+    padding: 20px 0;
+}
+
+.produto-card {
+    background-color: var(--cor-card-fundo);
+    border-radius: var(--borda-raio);
+    box-shadow: var(--sombra-leve);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.produto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.produto-card h2 {
+    font-size: 1.5em;
+    color: var(--cor-texto);
+    margin: 10px 0;
+    min-height: 40px; /* Garante que todos os títulos tenham uma altura mínima */
+}
+
+.produto-card img {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    aspect-ratio: 1/1; /* Mantém a imagem quadrada para melhor visualização de bolos */
+    border: 2px solid var(--cor-secundaria);
+}
+
+.produto-preco {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--cor-principal);
+    margin: 10px 0 15px;
+}
+
+.produto-descricao {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+}
+
+.produto-descricao span {
+    font-weight: 600;
+    color: var(--cor-texto);
+}
+
+.produto-card button {
+    background-color: var(--cor-principal);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%; /* Ocupa a largura total do card */
+    max-width: 250px;
+}
+
+.produto-card button:hover {
+    background-color: #e65c7a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/*
+* ======================================
+* Responsividade (Media Queries)
+* ======================================
+*/
+
+/* Para tablets e telas menores (abaixo de 768px) */
+@media (max-width: 768px) {
+    #root, .Home {
+        padding: 15px;
+    }
+    
+    header {
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        font-size: 2em;
+    }
+
+    .produto-lista {
+        /* O grid já é responsivo, mas ajustamos o minmax para garantir 1 coluna em telas muito pequenas */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .produto-card {
+        padding: 15px;
+    }
+    
+    .produto-card button {
+        max-width: none; /* Deixa o botão ocupar a largura total no mobile */
+    }
+}
+
+/* Para celulares (abaixo de 480px) */
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+    }
+    
+    header a, .LogoutBtn {
+        font-size: 0.9em;
+        padding: 8px 12px;
+    }
+
+    .CampoDeBusca-input {
+        padding: 12px 18px;
+        font-size: 1em;
+    }
+
+    .produto-lista {
+        /* Garante uma única coluna em telas muito pequenas */
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
 }

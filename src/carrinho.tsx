@@ -1,4 +1,6 @@
-import './Home.css'
+// Carrinho.tsx
+
+
 import api from './api/api'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
@@ -23,7 +25,7 @@ type ProdutoType = {
   descricao: string
 }
 
-// 🔥 NOVO: Tipos dos filtros
+//  NOVO: Tipos dos filtros
 type Filtros = {
   nome: string;
   precoMin: string;
@@ -34,7 +36,7 @@ function Carrinho() {
   const [itens, setItens] = useState<ItemCarrinho[]>([])
   const [produtos, setProdutos] = useState<ProdutoType[]>([])
 
-  // 🔥 NOVO: estados dos filtros
+  //  NOVO: estados dos filtros
   const [filtros, setFiltros] = useState<Filtros>({
     nome: "",
     precoMin: "",
@@ -83,7 +85,14 @@ function Carrinho() {
       .then((response) => setProdutos(response.data))
       .catch((error) => console.error('Error fetching products:', error))
 
-    buscarCarrinho()
+    // Busca carrinho
+    api.get("/carrinho")
+      .then((response) => {
+        // Pega itens de response.data.itens ou do próprio response.data se não for o formato completo
+        // Pega itens de response.data.itens ou do próprio response.data se não for o formato completo
+        const itensCarrinho = response.data.itens || response.data
+        setItens(Array.isArray(itensCarrinho) ? itensCarrinho : [])
+      })
   }, [])
 
   // ------------------------- FUNÇÕES ANTIGAS (NÃO MEXI) -------------------------
@@ -98,12 +107,15 @@ function Carrinho() {
         alert(`Erro ao remover carrinho: ${mensagem}`);
       })
   }
+  
 
+
+  // Sheron: Função para remover uma unidade de um item do carrinho
   function removerunidadeItem(produtoId: string) {
     api.post("/removerunidadeItem", { produtoId })
       .then((response) => {
-        const raw = response.data || {}
-        const itensAtualizados = Array.isArray(raw) ? raw : (raw.itens || [])
+        // MELHORIA: Usa os dados do carrinho ATUALIZADO retornados pelo backend para sincronizar o estado
+        const itensAtualizados = response.data.itens || [];
         setItens(itensAtualizados);
         alert("Uma unidade do item foi removida do carrinho!");
       })
@@ -129,46 +141,18 @@ function Carrinho() {
     <>
       <div>🛒 Carrinho de Compras</div>
       <a href='/'>← Voltar para Produtos</a>
-
-      {/* 🔥 NOVO: BLOCO DE FILTROS */}
-      <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-        <h3>Filtrar Itens</h3>
-
-        <input
-          type="text"
-          placeholder="Filtrar por nome..."
-          value={filtros.nome}
-          onChange={(e) => setFiltros({ ...filtros, nome: e.target.value })}
-        />
-
-        <input
-          type="number"
-          placeholder="Preço mínimo"
-          value={filtros.precoMin}
-          onChange={(e) => setFiltros({ ...filtros, precoMin: e.target.value })}
-        />
-
-        <input
-          type="number"
-          placeholder="Preço máximo"
-          value={filtros.precoMax}
-          onChange={(e) => setFiltros({ ...filtros, precoMax: e.target.value })}
-        />
-
-        <button onClick={buscarCarrinho}>Aplicar Filtros</button>
-      </div>
-
+      
       <div>
         <h2>Itens no Carrinho ({itens.length})</h2>
         {itens.length > 0 && (
-          <button onClick={removerCarrinho}>
+          <button onClick={removerCarrinho} className="esvaziar-carrinho-btn"> {/* CLASSE PARA O BOTÃO ESVAZIAR */}
             🗑️ Esvaziar Carrinho
           </button>
         )}
       </div>
 
       {itens.length === 0 ? (
-        <p>Seu carrinho está vazio.</p>
+        <p className="carrinho-vazio-mensagem">Seu carrinho está vazio.</p> 
       ) : (
         <>
           {itens.map((item) => {
@@ -176,31 +160,31 @@ function Carrinho() {
             const preco = obterPrecoItem(item)
             const key = item.produtoId || item._id || item.nome || Math.random().toString()
             return (
-              <div key={key}>
+              <div key={item.produtoId}>
                 <img 
                   src={item.urlfoto || dadosProduto.urlfoto} 
                   alt={item.nome} 
-                  width="100" 
+                  className="item-carrinho-card-imagem" // CLASSE PARA A IMAGEM
                 />
                 <h3>{item.nome}</h3>
                 <p>{item.descricao || dadosProduto.descricao}</p>
-                <p>Preço Unitário: R$ {preco.toFixed(2)}</p>
+                <p>Preço Unitário: R$ {item.precoUnitario.toFixed(2)}</p>
                 <p>Quantidade: {item.quantidade}</p>
-                <p>Subtotal: R$ {(preco * item.quantidade).toFixed(2)}</p>
-
-                <button onClick={() => removerunidadeItem(item.produtoId || item._id || '')}>
+                <p>Subtotal: R$ {(item.precoUnitario * item.quantidade).toFixed(2)}</p>
+                {}
+                <button onClick={() => removerunidadeItem(item.produtoId)}>
                   Remover Uma Unidade
                 </button>
               </div>
             )
           })}
 
-          <div>
+          <div className="carrinho-resumo-total"> {/* CLASSE PARA O RESUMO TOTAL */}
             <h3>Total da Compra: R$ {totalCarrinho}</h3>
           </div>
         </>
-      )}
-    </>
+      )} 
+    </div>
   )
 }
 
