@@ -159,6 +159,9 @@ function Carrinho() {
             const dadosProduto = getDadosProduto(item.produtoId || item._id || '')
             const preco = obterPrecoItem(item)
             const key = item.produtoId || item._id || item.nome || Math.random().toString()
+            if (!item.precoUnitario || !item.produtoId) {
+              return "erro"
+            }
             return (
               <div key={item.produtoId}>
                 <img 
