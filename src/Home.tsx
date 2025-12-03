@@ -19,110 +19,93 @@ function Home() {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
+    // Fetch products once on mount and use client-side filtering for search term
     useEffect(() => {
-        const fetchProdutos = async (termo: string) => {
+        const fetchProdutos = async () => {
             setLoading(true)
             setError(null)
 
-            const endpoint = termo.trim()
-                ? `/produtos/buscar?q=${encodeURIComponent(termo)}`
-                : '/produtos'
-
             try {
-                const response = await api.get(endpoint)
-                setProdutos(response.data)
-                console.log(`Produtos carregados para o termo: "${termo}"`)
+                const response = await api.get('/produtos')
+                // garante que SEMPRE retorna array
+                const lista = Array.isArray(response.data) ? response.data : response.data.produtos
+                setProdutos(lista || [])
             } catch (err: any) {
-                console.error('Error fetching data:', err)
-                setError('❌ Falha ao carregar os produtos. Verifique o servidor ou sua conexão.') 
+                console.error('Erro ao buscar produtos:', err)
+                setError('Falha ao carregar produtos.')
                 setProdutos([])
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchProdutos(termoBusca)
-    }, [termoBusca])
+        fetchProdutos()
+    }, [])
 
-    const handleBuscaChange = (valor: string) => {
-        setTermoBusca(valor)
-    }
+    // aplica filtro local baseado no termo de busca
+    const produtosFiltrados = produtos.filter((p) => {
+        // defensive: some produtos from API might miss fields or be null
+        const termo = termoBusca.trim().toLowerCase()
+        if (!termo) return true
 
-    const handleLogout = async () => {
-     try {
-         await api.post('/logout', {}); 
-         localStorage.removeItem('token')
-         window.location.replace('/login') 
-         
-     } catch (error: any) { 
-         console.error('Error during logout:', error.response?.data?.mensagem || error.message)
-         localStorage.removeItem('token')
-         window.location.replace('/login')
-     }
- }
+        const nome = (p.nome ?? "").toString().toLowerCase()
+        const descricao = (p.descricao ?? "").toString().toLowerCase()
+        const categoria = (p.categoria ?? "").toString().toLowerCase()
+        const urlfoto = (p.urlfoto ?? "").toString().toLowerCase()
 
-    const adicionarCarrinho = async (produtoId: string) => {
+        return (
+            nome.includes(termo) ||
+            descricao.includes(termo) ||
+            categoria.includes(termo) ||
+            urlfoto.includes(termo)
+        )
+    })
+
+    const adicionarCarrinho = async (id: string) => {
         try {
-            await api.post('/adicionarItem', { produtoId, quantidade: 1 })
-            alert('✅ Produto adicionado ao carrinho com sucesso!')
-        } catch (err: any) {
-            console.error('Error adding to cart:', err)
-            const msg = err?.response?.data?.mensagem ?? err?.message ?? 'Erro ao adicionar ao carrinho. Tente fazer login novamente.'
-            alert(`⚠️ ${msg}`)
+            await api.post('/adicionarItem', { produtoId: id, quantidade: 1 })
+            alert('Produto adicionado!')
+        } catch (err) {
+            alert('Erro ao adicionar ao carrinho.')
         }
     }
 
-    const formatarPreco = (preco: number) => {
-        return `R$ ${preco.toFixed(2).replace('.', ',')}`;
-    };
+    const formatarPreco = (preco: number) =>
+        `R$ ${preco.toFixed(2).replace('.', ',')}`
 
     return (
-        <>  
-            <header> 
-                <a href="/Carrinho" aria-label="Ver meu Carrinho de Compras">🛒 Ir para o Carrinho</a>
-                <button onClick={handleLogout} className='LogoutBtn'>Sair (Logout)</button> 
+        <>
+            <header>
+                <a href="/Carrinho">🛒 Ir para o Carrinho</a>
+                <button className="LogoutBtn">Sair</button>
             </header>
 
             <h2>🎂 Lista de Bolos e Doces Artesanais</h2>
-            
+
             <CampoDeBusca
                 valor={termoBusca}
-                onChange={handleBuscaChange}
+                onChange={setTermoBusca}
                 placeholder="Buscar bolos por nome ou categoria..."
             />
 
-            {loading && <p className="loading-text">🕒 Carregando ou buscando produtos deliciosos...</p>}
-            {error && <p className="error-text">Erro: {error}</p>}
+            {loading && <p>Carregando...</p>}
+            {error && <p>{error}</p>}
 
             {!loading && !error && (
                 <div className="produto-lista">
-                    {produtos.length === 0 ? (
-                        <p className="produto-lista-message">😥 Nenhum produto encontrado para o termo "{termoBusca}".</p>
+                    {produtosFiltrados.length === 0 ? (
+                        <p>Nenhum produto encontrado.</p>
                     ) : (
-                        produtos.map((produto) => (
-                            <div key={produto._id} className="produto-card">
-                                
-                                
-                                
-                                <h2>{produto.nome}</h2>
-                                
-                                <img 
-                                    src={produto.urlfoto} 
-                                    alt={`Foto de ${produto.nome}`} 
-                                    width="280" 
-                                    loading="lazy" 
-                                />
-                                <span className="produto-preco">{formatarPreco(produto.preco)}</span>
-                                <p className="produto-descricao"><span>Descrição:</span> {produto.descricao}</p>
-                                
-                                <button 
-                                    onClick={() => adicionarCarrinho(produto._id)}
-                                    aria-label={`Adicionar ${produto.nome} ao carrinho`}
-                                >
+                        produtosFiltrados.map((p) => (
+                            <div key={p._id} className="produto-card">
+                                <h2>{p.nome}</h2>
+                                <img src={p.urlfoto} width={220} />
+                                <span>{formatarPreco(p.preco)}</span>
+                                <p>{p.descricao}</p>
+                                <button onClick={() => adicionarCarrinho(p._id)}>
                                     Adicionar ao Carrinho
                                 </button>
                             </div>
-                            
                         ))
                     )}
                 </div>
